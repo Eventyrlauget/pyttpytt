@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Pyttpytt</title>
+<meta name="description" content="A cozy, non-violent mud-people strategy game. Gather dirt and water, grow your mud community, and shelter it from the weather.">
+<meta name="theme-color" content="#5b3a1e">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" href="./icons/icon-192.png">
+<link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pyttpytt">
+<link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+<div id="stage">
+  <canvas id="game"></canvas>
+  <canvas id="minimap" width="120" height="80"></canvas>
+
+  <div id="topbar">
+    <div class="chip" id="chip-dirt" title="Dirt at the mud pit"><span class="ico">🟤</span><span id="dirt-count">0</span></div>
+    <div class="chip" id="chip-water" title="Water at the mud pit"><span class="ico">💧</span><span id="water-count">0</span></div>
+    <div class="chip" id="chip-pop" title="Mud people"><span class="ico">🧑</span><span id="pop-count">0</span></div>
+    <div class="chip" id="chip-hut" title="Huts"><span class="ico">⛺</span><span id="hut-count">0</span></div>
+    <div class="spacer"></div>
+    <div class="chip objective" id="chip-goal"></div>
+    <div class="spacer"></div>
+    <div class="chip weather" id="chip-weather"><span id="weather-ico">☀️</span></div>
+    <button class="chip btn" id="btn-pause" aria-label="Pause">⏸</button>
+  </div>
+
+  <div id="hintbar" class="hidden"></div>
+
+  <div id="actionbar">
+    <div id="acts-none" class="acts">
+      <button data-act="idle">🫥<small>Idle</small></button>
+      <button data-act="all">👥<small>All</small></button>
+      <button data-act="exithuts">🚪<small>Out</small></button>
+    </div>
+    <div id="acts-sel" class="acts hidden">
+      <button data-act="dirt">🟤<small>Dirt</small></button>
+      <button data-act="water">💧<small>Water</small></button>
+      <button data-act="both">♻️<small>Both</small></button>
+      <button data-act="revive">✨<small>Revive</small></button>
+      <button data-act="build">⛺<small>Hut</small></button>
+      <button data-act="enter">🏠<small>In</small></button>
+      <button data-act="stop">✋<small>Stop</small></button>
+    </div>
+  </div>
+
+  <div id="toast" class="hidden"></div>
+
+  <div id="screen" class="overlay">
+    <div class="panel" id="screen-panel"></div>
+  </div>
+
+  <div id="rotate-overlay"><div>🔄<br>Please rotate your phone<br><small>Pyttpytt plays in landscape</small></div></div>
+</div>
+<script type="module" src="./js/main.js"></script>
+</body>
+</html>
