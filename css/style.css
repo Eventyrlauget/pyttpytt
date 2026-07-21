@@ -64,11 +64,11 @@ html, body {
 #actionbar {
   position: absolute;
   left: calc(6px + var(--sal));
-  bottom: calc(6px + var(--sab));
-  right: 136px;
+  top: 50%;
+  transform: translateY(-50%);
   pointer-events: none;
 }
-.acts { display: flex; gap: 5px; pointer-events: none; }
+.acts { display: grid; grid-template-columns: repeat(2, 48px); gap: 5px; pointer-events: none; }
 .acts button {
   pointer-events: auto;
   min-width: 48px; height: 48px;

@@ -46,6 +46,7 @@ export class UI {
         break;
       }
       case 'all': w.selectAll(); break;
+      case 'deselect': w.selected.clear(); break;
       case 'exithuts': w.cmdExitAll(); break;
       case 'dirt': w.cmdGather('dirt'); break;
       case 'water': w.cmdGather('water'); break;
