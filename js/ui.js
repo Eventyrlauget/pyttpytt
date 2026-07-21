@@ -46,7 +46,6 @@ export class UI {
         break;
       }
       case 'all': w.selectAll(); break;
-      case 'deselect': w.selected.clear(); break;
       case 'exithuts': w.cmdExitAll(); break;
       case 'dirt': w.cmdGather('dirt'); break;
       case 'water': w.cmdGather('water'); break;
@@ -72,9 +71,6 @@ export class UI {
 
   refreshActions() {
     const w = this.game.world;
-    const hasSel = w.sel().length > 0;
-    $('acts-none').classList.toggle('hidden', hasSel);
-    $('acts-sel').classList.toggle('hidden', !hasSel);
     const buildBtn = document.querySelector('[data-act="build"]');
     buildBtn.classList.toggle('armed', this.buildArmed);
     document.querySelector('[data-act="enter"]').disabled = w.completedHuts.length === 0;
