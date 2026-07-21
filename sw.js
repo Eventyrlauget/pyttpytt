@@ -1,4 +1,4 @@
-const CACHE = 'pyttpytt-v1';
+const CACHE = 'pyttpytt-v2';
 const ASSETS = [
   './',
   './index.html',
