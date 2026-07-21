@@ -64,8 +64,7 @@ html, body {
 #actionbar {
   position: absolute;
   left: calc(6px + var(--sal));
-  top: 50%;
-  transform: translateY(-50%);
+  top: calc(40px + var(--sat));
   pointer-events: none;
 }
 .acts { display: grid; grid-template-columns: repeat(2, 48px); gap: 5px; pointer-events: none; }
