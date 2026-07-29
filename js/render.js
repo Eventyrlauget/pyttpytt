@@ -408,37 +408,56 @@ export class Renderer {
   // ---------- mud people ----------
 
   // the shared gingerbread/golem body: rounded head over a wider belly, stubby arms & legs
-  golem(ctx, cx, y, r, pal, { swell = false, water = false, walk = 0, moving = false } = {}) {
-    const bw = r * 0.98 * (swell ? 1.3 : 1);
-    const bh = r * 0.88 * (swell ? 1.16 : 1);
-    const headR = r * 0.8 * (swell ? 0.9 : 1);
-    // legs — swing forward/back and lift while walking
+  // an irregular, lumpy clay silhouette (several overlaid frequencies of wobble)
+  muddyBlob(ctx, x, y, rx, ry, phase, amp = 0.12) {
+    ctx.beginPath();
+    const n = 18;
+    for (let i = 0; i <= n; i++) {
+      const a = (i / n) * Math.PI * 2;
+      const w = 1 + amp * Math.sin(a * 3 + phase) + amp * 0.5 * Math.sin(a * 5 + phase * 1.7) + amp * 0.32 * Math.sin(a * 7 + phase * 0.6);
+      const px = x + Math.cos(a) * rx * w;
+      const py = y + Math.sin(a) * ry * w;
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+  }
+
+  golem(ctx, cx, y, r, pal, { swell = false, water = false, walk = 0, moving = false, phase = 0 } = {}) {
+    const bw = r * 0.92 * (swell ? 1.34 : 1);
+    const bh = r * 0.94 * (swell ? 1.12 : 1);
+    const headR = r * 0.74 * (swell ? 0.9 : 1);
     const l1 = moving ? Math.sin(walk) : 0;
     const l2 = moving ? Math.sin(walk + Math.PI) : 0;
     const stride = r * 0.34, lift = r * 0.32;
+    // chunky clay legs (lumpy, with walk swing)
     ctx.fillStyle = pal.dark;
-    ctx.beginPath(); ctx.ellipse(cx - r * 0.4 + l1 * stride, y + r * 1.05 - Math.max(0, l1) * lift, r * 0.31, r * 0.35, 0, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(cx + r * 0.4 + l2 * stride, y + r * 1.05 - Math.max(0, l2) * lift, r * 0.31, r * 0.35, 0, 0, 7); ctx.fill();
-    // stubby arms hanging at the sides — swing opposite the legs
-    ctx.beginPath(); ctx.ellipse(cx - bw * 0.9, y + r * 0.2 + l2 * r * 0.12, r * 0.28, r * 0.46, 0.28, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(cx + bw * 0.9, y + r * 0.2 + l1 * r * 0.12, r * 0.28, r * 0.46, -0.28, 0, 7); ctx.fill();
-    // body — one continuous bell: a rounded top blending into a wider belly
-    const g = ctx.createRadialGradient(cx - r * 0.28, y - r * 0.5, r * 0.22, cx, y + r * 0.3, r * 1.55);
+    this.muddyBlob(ctx, cx - r * 0.42 + l1 * stride, y + r * 1.02 - Math.max(0, l1) * lift, r * 0.33, r * 0.42, phase + 3, 0.1); ctx.fill();
+    this.muddyBlob(ctx, cx + r * 0.42 + l2 * stride, y + r * 1.02 - Math.max(0, l2) * lift, r * 0.33, r * 0.42, phase + 7, 0.1); ctx.fill();
+    // chunky clay arms hanging at the sides — swing opposite the legs
+    this.muddyBlob(ctx, cx - bw * 0.94, y + r * 0.24 + l2 * r * 0.12, r * 0.3, r * 0.5, phase + 11, 0.1); ctx.fill();
+    this.muddyBlob(ctx, cx + bw * 0.94, y + r * 0.24 + l1 * r * 0.12, r * 0.3, r * 0.5, phase + 15, 0.1); ctx.fill();
+    // body — lumpy wet clay: a rounded head melding into a wider belly
+    const g = ctx.createRadialGradient(cx - r * 0.28, y - r * 0.5, r * 0.22, cx, y + r * 0.34, r * 1.6);
     g.addColorStop(0, pal.light);
     g.addColorStop(1, pal.dark);
     ctx.fillStyle = g;
-    ctx.beginPath(); ctx.ellipse(cx, y + r * 0.36, bw, bh, 0, 0, 7); ctx.fill();          // belly
-    ctx.beginPath(); ctx.ellipse(cx, y - r * 0.34, headR, r * 0.76, 0, 0, 7); ctx.fill(); // head (heavy overlap → bell)
-    // warm highlight down the front
+    this.muddyBlob(ctx, cx, y + r * 0.36, bw, bh, phase, 0.14); ctx.fill();              // belly
+    this.muddyBlob(ctx, cx, y - r * 0.34, headR, r * 0.74, phase * 1.4 + 2, 0.12); ctx.fill(); // head
+    // darker mud blotches for a wet, uneven surface
+    ctx.fillStyle = pal.blot;
+    this.muddyBlob(ctx, cx + r * 0.28, y + r * 0.52, r * 0.24, r * 0.19, phase + 4, 0.24); ctx.fill();
+    this.muddyBlob(ctx, cx - r * 0.34, y + r * 0.16, r * 0.17, r * 0.15, phase + 9, 0.24); ctx.fill();
+    this.muddyBlob(ctx, cx + r * 0.08, y - r * 0.12, r * 0.14, r * 0.12, phase + 13, 0.24); ctx.fill();
+    // wet sheen down the front-left
     ctx.fillStyle = pal.hi;
-    ctx.beginPath(); ctx.ellipse(cx - r * 0.1, y + r * 0.12, bw * 0.4, bh * 0.62, -0.1, 0, 7); ctx.fill();
+    this.muddyBlob(ctx, cx - r * 0.22, y - r * 0.02, bw * 0.34, bh * 0.46, phase + 1, 0.18); ctx.fill();
     // water sloshing in the belly
     if (water) {
       const wg = ctx.createRadialGradient(cx - bw * 0.25, y + r * 0.1, bw * 0.15, cx, y + r * 0.4, bw);
       wg.addColorStop(0, 'rgba(120,205,240,.5)');
       wg.addColorStop(1, 'rgba(58,150,214,.5)');
       ctx.fillStyle = wg;
-      ctx.beginPath(); ctx.ellipse(cx, y + r * 0.36, bw * 0.9, bh * 0.86, 0, 0, 7); ctx.fill();
+      this.muddyBlob(ctx, cx, y + r * 0.36, bw * 0.9, bh * 0.84, phase, 0.13); ctx.fill();
       ctx.fillStyle = 'rgba(255,255,255,.45)';
       ctx.beginPath(); ctx.ellipse(cx - bw * 0.3, y + r * 0.02, bw * 0.24, bh * 0.24, -0.3, 0, 7); ctx.fill();
     }
@@ -466,7 +485,7 @@ export class Renderer {
     if (p.state === 'dried') {
       ctx.fillStyle = 'rgba(0,0,0,.12)';
       ctx.beginPath(); ctx.ellipse(p.x, p.y + r * 0.9, r * 0.95, r * 0.34, 0, 0, 7); ctx.fill();
-      this.golem(ctx, p.x, p.y, r, { light: '#ccc1a7', dark: '#948868', hi: 'rgba(255,255,245,.32)' }, {});
+      this.golem(ctx, p.x, p.y, r, { light: '#c6bb9f', dark: '#8f8365', hi: 'rgba(255,255,245,.28)', blot: 'rgba(108,96,72,.4)' }, { phase: p.id });
       // cracks
       ctx.strokeStyle = '#6f6047';
       ctx.lineWidth = 1.1;
@@ -486,10 +505,10 @@ export class Renderer {
     ctx.fillStyle = 'rgba(0,0,0,.14)';
     ctx.beginPath(); ctx.ellipse(p.x, p.y + r * 0.95, r * 0.9, r * 0.32, 0, 0, 7); ctx.fill();
 
-    const pal = { light: '#b5813f', dark: '#7a4f26', hi: 'rgba(255,226,176,.28)' };
+    const pal = { light: '#a86f37', dark: '#5e3c1d', hi: 'rgba(255,224,172,.2)', blot: 'rgba(56,34,15,.32)' };
     this.golem(ctx, p.x, y, r, pal, {
       swell: p.carrying === 'water', water: p.carrying === 'water',
-      walk: p.walk, moving: p.moving,
+      walk: p.walk, moving: p.moving, phase: p.id,
     });
 
     // eyes perched at the top of the head (busy = little side-to-side wobble)

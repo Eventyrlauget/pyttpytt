@@ -1,6 +1,6 @@
 // Keep in sync with APP_VERSION in js/const.js — bumping this is what makes
 // installed PWAs drop the old cache and pick up a release.
-const CACHE = 'pyttpytt-0.4.2';
+const CACHE = 'pyttpytt-0.5.0';
 const ASSETS = [
   './',
   './index.html',
