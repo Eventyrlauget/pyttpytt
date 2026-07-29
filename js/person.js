@@ -1,4 +1,4 @@
-import { PERSON_SPEED, CARRY_AMOUNT, GATHER_TIME, REVIVE_TIME, REVIVE_COST } from './const.js';
+import { PERSON_SPEED, CARRY_AMOUNT, GATHER_TIME, REVIVE_TIME, REVIVE_COST, HUT_MOULD_TIME } from './const.js';
 import { dist, nearest } from './util.js';
 
 let nextId = 1;
@@ -27,6 +27,11 @@ export class Person {
   moveTo(x, y) { this.task = { type: 'move', x, y }; }
 
   gather(res) { // 'dirt' | 'water' | 'both'
+    // already holding what was asked for (or holding anything, for 'both') — drop it off first
+    if (this.carrying && (res === this.carrying || res === 'both')) {
+      this.task = { type: 'gather', mode: res, res: this.carrying, phase: 'toPit', timer: 0, target: null };
+      return;
+    }
     const first = res === 'both' ? (Math.random() < 0.5 ? 'dirt' : 'water') : res;
     this.task = { type: 'gather', mode: res, res: first, phase: 'toSource', timer: 0, target: null };
   }
@@ -145,9 +150,10 @@ export class Person {
       if (hut.dead || hut.complete) { this.task = null; return; }
       if (t.phase === 'toSite') {
         const a = (this.id % 8) / 8 * Math.PI * 2;
-        if (this._step(hut.x + Math.cos(a) * 30, hut.y + Math.sin(a) * 22, dt)) t.phase = 'working';
-      } else {
-        hut.workThisFrame += dt;
+        if (this._step(hut.x + Math.cos(a) * 30, hut.y + Math.sin(a) * 22, dt)) { t.phase = 'moulding'; t.timer = 0; }
+      } else if (t.phase === 'moulding') {
+        t.timer += dt;
+        if (t.timer >= HUT_MOULD_TIME) world.mouldIntoHut(this, hut);
       }
       return;
     }

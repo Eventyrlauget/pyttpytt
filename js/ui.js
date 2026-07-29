@@ -191,7 +191,7 @@ export class UI {
         <li>With a selection, <b>tap a pond/dirt hole</b> (or use 💧🟤♻️ buttons) to gather. Loads go to the <b>mud pit</b>.</li>
         <li><b>${SPAWN_COST} dirt + ${SPAWN_COST} water</b> at the pit auto-creates a new mud person.</li>
         <li>🌧 <b>Rain melts</b> mud people → revive the puddle with <b>dirt</b>. ☀️ <b>Sun dries</b> them → revive with <b>water</b>. Tap a fallen friend or use ✨.</li>
-        <li>⛺ <b>Huts</b> (cost ${HUT_COST}+${HUT_COST}) shelter 5 each. Rain damages unfinished huts. 🏠 In / 🚪 Out to shelter &amp; release.</li>
+        <li>⛺ <b>Huts</b> (cost ${HUT_COST}+${HUT_COST}) are built by 3 mud people moulding themselves in, one per stage — each builder is consumed. Rain knocks an unfinished hut back a stage. Complete huts shelter 5. 🏠 In / 🚪 Out to shelter &amp; release.</li>
         <li>Watch the <b>forecast</b> (top right) — the warning flash gives you a head start.</li>
         <li>Reach each level's population (and hut) goal to advance. Endless procedurally generated levels!</li>
       </ul>

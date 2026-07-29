@@ -11,9 +11,9 @@ export const REVIVE_COST = 3;        // one carry-load
 export const SPAWN_COST = 15;        // dirt AND water needed per new mud person
 
 export const HUT_COST = 8;           // dirt AND water to start a hut
-export const HUT_BUILD_WORK = 24;    // worker-seconds to complete
+export const HUT_STAGES = 3;         // mud people needed to complete a hut, one per stage
+export const HUT_MOULD_TIME = 8;     // seconds for a mud person to meld into a hut stage
 export const HUT_CAPACITY = 5;
-export const HUT_RAIN_DAMAGE = 1 / 3;// progress lost when rain starts (incomplete huts)
 
 export const ZOOM_MIN = 0.55;
 export const ZOOM_MAX = 2.2;
@@ -27,11 +27,11 @@ export function levelParams(n) {
     startStock: 6,
     popTarget: 6 + 2 * n,
     hutTarget: n >= 2 ? Math.min(1 + Math.floor((n - 2) / 3), 3) : 0,
-    clearMin: Math.max(9, 24 - c * 1.3),
-    clearMax: Math.max(15, 34 - c * 1.6),
+    clearMin: Math.max(9, 24 - c * 1.3) * 1.5,  // +50% time between weather events
+    clearMax: Math.max(15, 34 - c * 1.6) * 1.5,
     warnTime: 4,
-    eventMin: 6 + c * 0.6,
-    eventMax: 9 + c * 0.8,
+    eventMin: (6 + c * 0.6) * 0.5,              // -50% how long weather lasts
+    eventMax: (9 + c * 0.8) * 0.5,
     exposureTol: Math.max(3.5, 6 - c * 0.2), // seconds in rain/sun before melt/dry
     dirtholes: 2 + (n % 3 === 0 ? 1 : 0),
     ponds: 2 + (n % 2 === 0 ? 1 : 0),

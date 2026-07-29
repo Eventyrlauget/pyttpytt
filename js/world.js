@@ -1,6 +1,6 @@
 import {
-  WORLD_W, WORLD_H, SPAWN_COST, HUT_COST, HUT_BUILD_WORK, HUT_CAPACITY,
-  HUT_RAIN_DAMAGE, PERSON_R, levelParams,
+  WORLD_W, WORLD_H, SPAWN_COST, HUT_COST, HUT_STAGES, HUT_CAPACITY,
+  PERSON_R, levelParams,
 } from './const.js';
 import { mulberry32, randIn, dist, nearest, clamp } from './util.js';
 import { Person } from './person.js';
@@ -94,6 +94,24 @@ export class World {
     this.emit('✨ A mud friend is back on their feet!');
   }
 
+  // a builder finishes moulding themselves into the hut structure — they're consumed by it
+  mouldIntoHut(person, hut) {
+    if (hut.dead || hut.complete) { person.task = null; return; }
+    this.people = this.people.filter(p => p !== person);
+    this.selected.delete(person);
+    hut.stage = Math.min(HUT_STAGES, hut.stage + 1);
+    hut.progress = hut.stage / HUT_STAGES;
+    this.lastEventPos = { x: hut.x, y: hut.y };
+    if (hut.stage >= HUT_STAGES) {
+      hut.complete = true;
+      sfx.hutDone();
+      this.emit('⛺ Hut complete! It shelters 5 mud people.');
+    } else {
+      sfx.command();
+      this.emit('🧱 A mud person moulds into the hut!');
+    }
+  }
+
   // ---------- commands (from input/UI) ----------
   sel() { return [...this.selected].filter(p => p.alive && !p.inHut); }
 
@@ -144,8 +162,8 @@ export class World {
     this.stock.water -= HUT_COST;
     const hut = {
       id: nextHutId++, kind: 'hut', x, y, r: 34,
-      progress: 0, complete: false, dead: false,
-      workThisFrame: 0, occupants: [], capacity: HUT_CAPACITY,
+      stage: 0, progress: 0, complete: false, dead: false,
+      occupants: [], capacity: HUT_CAPACITY,
     };
     this.huts.push(hut);
     this.sel().forEach(p => p.build(hut));
@@ -256,7 +274,10 @@ export class World {
           sfx.rain();
           this.emit('🌧 Rain! Get inside or get melted!', 'warn');
           this.huts.forEach(h => {
-            if (!h.complete && !h.dead) h.progress = Math.max(0, h.progress - HUT_RAIN_DAMAGE);
+            if (!h.complete && !h.dead && h.stage > 0) {
+              h.stage -= 1;
+              h.progress = h.stage / HUT_STAGES;
+            }
           });
         } else {
           sfx.sun();
@@ -301,21 +322,6 @@ export class World {
 
     // people
     for (const p of this.people) p.update(dt, this);
-
-    // huts
-    for (const h of this.huts) {
-      if (h.workThisFrame > 0 && !h.complete) {
-        h.progress += h.workThisFrame / HUT_BUILD_WORK;
-        h.workThisFrame = 0;
-        if (h.progress >= 1) {
-          h.progress = 1; h.complete = true;
-          sfx.hutDone();
-          this.emit('⛺ Hut complete! It shelters 5 mud people.');
-          this.people.forEach(p => { if (p.task?.type === 'build' && p.task.hut === h) p.task = null; });
-        }
-      }
-      h.workThisFrame = 0;
-    }
 
     // spawn
     if (this.stock.dirt >= SPAWN_COST && this.stock.water >= SPAWN_COST) {
