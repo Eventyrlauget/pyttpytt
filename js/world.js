@@ -289,10 +289,15 @@ export class World {
       }
     }
 
-    // exposure
+    // exposure — carrying the opposite resource shields you:
+    // water keeps you cool in the sun, a load of dirt keeps you from melting in rain.
     for (const p of this.people) {
       if (!p.alive || p.inHut) continue;
       if (W.state === 'rain') {
+        if (p.carrying === 'dirt') {
+          p.wet = Math.max(0, p.wet - dt);
+          continue;
+        }
         p.wet += dt;
         p.dry = Math.max(0, p.dry - dt * 2);
         if (p.wet >= P.exposureTol) {
@@ -304,6 +309,10 @@ export class World {
           this.emit('😢 A mud person melted! Revive with dirt ✨', 'bad');
         }
       } else if (W.state === 'sun') {
+        if (p.carrying === 'water') {
+          p.dry = Math.max(0, p.dry - dt);
+          continue;
+        }
         p.dry += dt;
         p.wet = Math.max(0, p.wet - dt * 2);
         if (p.dry >= P.exposureTol) {

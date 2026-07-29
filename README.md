@@ -13,6 +13,8 @@ screen for fullscreen offline play.
 - **15 dirt + 15 water** at the pit automatically creates a new mud person.
 - 🌧 **Rain melts** exposed mud people (revive the puddle with dirt);
   ☀️ **sun dries** them (revive with water).
+- Carrying the opposite resource **shields** you: a mud person hauling
+  💧 water shrugs off the sun, and one hauling 🟤 dirt won't melt in the rain.
 - ⛺ **Huts** (8 dirt + 8 water, built by workers in three stages) shelter
   5 mud people each. Rain damages unfinished huts.
 - Reach each level's population/hut goal to advance. Levels are **procedurally
