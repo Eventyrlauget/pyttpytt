@@ -50,7 +50,6 @@ export class UI {
       case 'exithuts': w.cmdExitAll(); break;
       case 'dirt': w.cmdGather('dirt'); break;
       case 'water': w.cmdGather('water'); break;
-      case 'both': w.cmdGather('both'); break;
       case 'revive': w.cmdRevive(); break;
       case 'stop': w.cmdStop(); break;
       case 'enter': w.cmdEnter(); break;
@@ -121,7 +120,7 @@ export class UI {
       { text: '👋 Welcome! Drag to look around. Tap a mud person to select it.', done: w => w.selected.size > 0 },
       { text: 'Now tap a pond 💧 or a dirt hole 🟤 — your mud person will start gathering.', done: w => w.people.some(p => p.task?.type === 'gather') },
       { text: `Gathering fills the mud pit. ${SPAWN_COST} dirt + ${SPAWN_COST} water makes a NEW mud person!`, done: w => w.spawnedCount > 0 },
-      { text: 'Tip: long-press and drag to select a whole group. ♻️ Both = gather dirt & water.', done: w => w.weather.state !== 'clear' },
+      { text: 'Tip: long-press and drag to select a whole group. Balance your 🟤 dirt and 💧 water yourself!', done: w => w.weather.state !== 'clear' },
       { text: '⚠️ Weather! Rain MELTS mud people, sun DRIES them. Build a hut ⛺ or revive fallen friends ✨.', done: w => w.time > 60 && w.weather.state === 'clear' },
     ];
   }
@@ -178,7 +177,7 @@ export class UI {
       <h2>📖 How to play</h2>
       <ul class="howto">
         <li><b>Tap</b> a mud person to select. <b>Long-press &amp; drag</b> for a group. <b>Drag</b> ground to pan, <b>pinch</b> to zoom.</li>
-        <li>With a selection, <b>tap a pond/dirt hole</b> (or use 💧🟤♻️ buttons) to gather. Loads go to the <b>mud pit</b>.</li>
+        <li>With a selection, <b>tap a pond/dirt hole</b> (or use the 💧🟤 buttons) to gather. Loads go to the <b>mud pit</b>.</li>
         <li><b>${SPAWN_COST} dirt + ${SPAWN_COST} water</b> at the pit auto-creates a new mud person.</li>
         <li>🌧 <b>Rain melts</b> mud people → revive the puddle with <b>dirt</b>. ☀️ <b>Sun dries</b> them → revive with <b>water</b>. Tap a fallen friend or use ✨.</li>
         <li>⛺ <b>Huts</b> cost no dirt or water — ${HUT_STAGES} mud people mould themselves in, one per stage, and each builder becomes part of the hut. Rain knocks an unfinished hut back a stage. Complete huts shelter 5. 🏠 In / 🚪 Out to shelter &amp; release.</li>

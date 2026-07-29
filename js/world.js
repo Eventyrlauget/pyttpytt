@@ -235,7 +235,6 @@ export class World {
     if (lm) {
       if (lm.kind === 'pond') { ps.forEach(p => p.gather('water')); sfx.command(); return true; }
       if (lm.kind === 'dirthole') { ps.forEach(p => p.gather('dirt')); sfx.command(); return true; }
-      if (lm.kind === 'mudpit') { ps.forEach(p => p.gather('both')); sfx.command(); return true; }
       if (lm.kind === 'hut') {
         if (lm.complete) this.cmdEnter(lm);
         else { ps.forEach(p => p.build(lm)); sfx.command(); }

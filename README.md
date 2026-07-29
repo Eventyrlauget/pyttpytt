@@ -34,7 +34,7 @@ screen for fullscreen offline play.
 | Pinch | Zoom |
 | Minimap tap | Jump camera |
 
-Desktop niceties: original Mudcraft hotkeys (`s d w g r h x f i a`, Enter,
+Desktop niceties: original Mudcraft hotkeys (`s d w r h x f i a`, Enter,
 Space), mouse wheel zoom, right-click to command.
 
 ## Not yet implemented (from the original)

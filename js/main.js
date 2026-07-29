@@ -82,7 +82,6 @@ window.addEventListener('keydown', e => {
   if (k === 's') w.cmdStop();
   else if (k === 'd') w.cmdGather('dirt');
   else if (k === 'w') w.cmdGather('water');
-  else if (k === 'g') w.cmdGather('both');
   else if (k === 'r') w.cmdRevive();
   else if (k === 'h') w.cmdEnter();
   else if (k === 'x') w.cmdExitAll();

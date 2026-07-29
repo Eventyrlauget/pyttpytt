@@ -26,14 +26,13 @@ export class Person {
 
   moveTo(x, y) { this.task = { type: 'move', x, y }; }
 
-  gather(res) { // 'dirt' | 'water' | 'both'
-    // already holding what was asked for (or holding anything, for 'both') — drop it off first
-    if (this.carrying && (res === this.carrying || res === 'both')) {
-      this.task = { type: 'gather', mode: res, res: this.carrying, phase: 'toPit', timer: 0, target: null };
+  gather(res) { // 'dirt' | 'water'
+    // asked to fetch what we're already holding — drop it off at the pit first
+    if (this.carrying === res) {
+      this.task = { type: 'gather', res, phase: 'toPit', timer: 0, target: null };
       return;
     }
-    const first = res === 'both' ? (Math.random() < 0.5 ? 'dirt' : 'water') : res;
-    this.task = { type: 'gather', mode: res, res: first, phase: 'toSource', timer: 0, target: null };
+    this.task = { type: 'gather', res, phase: 'toSource', timer: 0, target: null };
   }
 
   revive(target) {
@@ -101,7 +100,6 @@ export class Person {
         if (this._step(p.x + p.slotX, p.y + p.slotY, dt)) {
           world.deposit(this.carrying, this.carryAmt);
           this.carrying = null; this.carryAmt = 0;
-          if (t.mode === 'both') t.res = t.res === 'dirt' ? 'water' : 'dirt';
           t.phase = 'toSource'; t.target = null;
         }
       }
