@@ -1,4 +1,4 @@
-import { SPAWN_COST, HUT_COST } from './const.js';
+import { SPAWN_COST, HUT_STAGES, APP_VERSION } from './const.js';
 import { sfx, isMuted, setMuted, unlock } from './audio.js';
 
 const $ = id => document.getElementById(id);
@@ -24,6 +24,7 @@ export class UI {
     document.querySelectorAll('#actionbar button').forEach(btn => {
       btn.addEventListener('click', () => { unlock(); this.action(btn.dataset.act); });
     });
+    $('chip-ver').textContent = `v${APP_VERSION}`;
     $('btn-pause').addEventListener('click', () => { unlock(); this.showPause(); });
     $('chip-goal').addEventListener('click', () => {
       const c = this.game.cam, m = this.game.world.mudpit;
@@ -55,15 +56,7 @@ export class UI {
       case 'enter': w.cmdEnter(); break;
       case 'build':
         this.buildArmed = !this.buildArmed;
-        if (this.buildArmed) {
-          if (w.stock.dirt < HUT_COST || w.stock.water < HUT_COST) {
-            w.emit(`A hut needs ${HUT_COST} 🟤 + ${HUT_COST} 💧 stocked at the mud pit`, 'warn');
-            sfx.deny();
-            this.buildArmed = false;
-          } else {
-            w.emit('Tap open ground to place the hut ⛺');
-          }
-        }
+        if (this.buildArmed) w.emit(`Tap open ground — ${HUT_STAGES} mud people will mould into the hut ⛺`);
         break;
     }
     this.refreshActions();
@@ -188,7 +181,7 @@ export class UI {
         <li>With a selection, <b>tap a pond/dirt hole</b> (or use 💧🟤♻️ buttons) to gather. Loads go to the <b>mud pit</b>.</li>
         <li><b>${SPAWN_COST} dirt + ${SPAWN_COST} water</b> at the pit auto-creates a new mud person.</li>
         <li>🌧 <b>Rain melts</b> mud people → revive the puddle with <b>dirt</b>. ☀️ <b>Sun dries</b> them → revive with <b>water</b>. Tap a fallen friend or use ✨.</li>
-        <li>⛺ <b>Huts</b> (cost ${HUT_COST}+${HUT_COST}) are built by 3 mud people moulding themselves in, one per stage — each builder is consumed. Rain knocks an unfinished hut back a stage. Complete huts shelter 5. 🏠 In / 🚪 Out to shelter &amp; release.</li>
+        <li>⛺ <b>Huts</b> cost no dirt or water — ${HUT_STAGES} mud people mould themselves in, one per stage, and each builder becomes part of the hut. Rain knocks an unfinished hut back a stage. Complete huts shelter 5. 🏠 In / 🚪 Out to shelter &amp; release.</li>
         <li>Watch the <b>forecast</b> (top right) — the warning flash gives you a head start.</li>
         <li>Reach each level's population (and hut) goal to advance. Endless procedurally generated levels!</li>
       </ul>

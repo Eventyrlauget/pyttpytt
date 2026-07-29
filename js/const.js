@@ -1,3 +1,6 @@
+// Bump on every release; keep sw.js CACHE in sync so clients pick up the change.
+export const APP_VERSION = '0.2.0';
+
 export const WORLD_W = 1500;
 export const WORLD_H = 1000;
 
@@ -10,7 +13,6 @@ export const REVIVE_COST = 3;        // one carry-load
 
 export const SPAWN_COST = 15;        // dirt AND water needed per new mud person
 
-export const HUT_COST = 8;           // dirt AND water to start a hut
 export const HUT_STAGES = 3;         // mud people needed to complete a hut, one per stage
 export const HUT_MOULD_TIME = 8;     // seconds for a mud person to meld into a hut stage
 export const HUT_CAPACITY = 5;

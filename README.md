@@ -15,8 +15,9 @@ screen for fullscreen offline play.
   ☀️ **sun dries** them (revive with water).
 - Carrying the opposite resource **shields** you: a mud person hauling
   💧 water shrugs off the sun, and one hauling 🟤 dirt won't melt in the rain.
-- ⛺ **Huts** (8 dirt + 8 water, built by workers in three stages) shelter
-  5 mud people each. Rain damages unfinished huts.
+- ⛺ **Huts** cost no resources — **three mud people mould themselves in**,
+  one per stage, each becoming part of the hut. Rain knocks an unfinished hut
+  back one stage. A finished hut shelters 5 mud people.
 - Reach each level's population/hut goal to advance. Levels are **procedurally
   generated** with escalating weather — endless, no paywall.
 
@@ -47,4 +48,7 @@ five-part scoring. The level-complete screen tracks time/growth/losses.
 Plain ES modules, no build step — serve the repo root with any static
 server (`python3 -m http.server`) and open `http://localhost:8000`.
 Deployed to GitHub Pages by `.github/workflows/deploy.yml` on push to `main`.
-When releasing a change, bump `CACHE` in `sw.js` so installed PWAs pick it up.
+When releasing a change, bump **both** `APP_VERSION` in `js/const.js` and
+`CACHE` in `sw.js` (keep them identical) — the version shows in the top bar so
+you can tell at a glance which build a device is actually running, and the
+cache bump is what makes installed PWAs drop the old files.

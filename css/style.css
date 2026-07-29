@@ -58,6 +58,10 @@ html, body {
 .chip .ico { font-size: 12px; }
 .chip.btn { font-size: 14px; padding: 4px 10px; }
 .chip.objective { background: rgba(43,84,29,.85); }
+.chip.ver {
+  font-size: 9px; font-weight: 600; letter-spacing: .3px;
+  padding: 3px 6px; opacity: .6;
+}
 .chip.weather.warn { animation: flash .5s steps(2) infinite; }
 @keyframes flash { to { background: rgba(200,60,30,.9); } }
 

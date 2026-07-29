@@ -1,5 +1,5 @@
 import {
-  WORLD_W, WORLD_H, SPAWN_COST, HUT_COST, HUT_STAGES, HUT_CAPACITY,
+  WORLD_W, WORLD_H, SPAWN_COST, HUT_STAGES, HUT_CAPACITY,
   PERSON_R, levelParams,
 } from './const.js';
 import { mulberry32, randIn, dist, nearest, clamp } from './util.js';
@@ -147,19 +147,12 @@ export class World {
   }
 
   cmdBuildAt(x, y) {
-    if (this.stock.dirt < HUT_COST || this.stock.water < HUT_COST) {
-      this.emit(`Needs ${HUT_COST} 🟤 + ${HUT_COST} 💧 at the mud pit`, 'warn');
-      sfx.deny();
-      return false;
-    }
     const blockers = [this.mudpit, ...this.dirtholes, ...this.ponds, ...this.huts];
     if (blockers.some(b => dist(x, y, b.x, b.y) < (b.r || 34) + 40)) {
       this.emit('Too close to something — pick open ground', 'warn');
       sfx.deny();
       return false;
     }
-    this.stock.dirt -= HUT_COST;
-    this.stock.water -= HUT_COST;
     const hut = {
       id: nextHutId++, kind: 'hut', x, y, r: 34,
       stage: 0, progress: 0, complete: false, dead: false,
