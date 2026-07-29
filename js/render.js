@@ -409,28 +409,29 @@ export class Renderer {
 
   // the shared gingerbread/golem body: rounded head over a wider belly, stubby arms & legs
   golem(ctx, cx, y, r, pal, { swell = false, water = false, walk = 0, moving = false } = {}) {
-    const bw = r * 0.95 * (swell ? 1.2 : 1);
-    const bh = r * 0.85 * (swell ? 1.14 : 1);
+    const bw = r * 0.98 * (swell ? 1.3 : 1);
+    const bh = r * 0.88 * (swell ? 1.16 : 1);
+    const headR = r * 0.8 * (swell ? 0.9 : 1);
     // legs — swing forward/back and lift while walking
     const l1 = moving ? Math.sin(walk) : 0;
     const l2 = moving ? Math.sin(walk + Math.PI) : 0;
     const stride = r * 0.34, lift = r * 0.32;
     ctx.fillStyle = pal.dark;
-    ctx.beginPath(); ctx.ellipse(cx - r * 0.42 + l1 * stride, y + r * 1.02 - Math.max(0, l1) * lift, r * 0.3, r * 0.34, 0, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(cx + r * 0.42 + l2 * stride, y + r * 1.02 - Math.max(0, l2) * lift, r * 0.3, r * 0.34, 0, 0, 7); ctx.fill();
-    // arms peeking from behind the belly — swing opposite the legs
-    ctx.beginPath(); ctx.ellipse(cx - bw * 0.92, y + r * 0.28 + l2 * r * 0.12, r * 0.3, r * 0.48, 0.35, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(cx + bw * 0.92, y + r * 0.28 + l1 * r * 0.12, r * 0.3, r * 0.48, -0.35, 0, 7); ctx.fill();
-    // body (belly + head, same gradient so they read as one form)
-    const g = ctx.createRadialGradient(cx - r * 0.3, y - r * 0.4, r * 0.25, cx, y + r * 0.2, r * 1.5);
+    ctx.beginPath(); ctx.ellipse(cx - r * 0.4 + l1 * stride, y + r * 1.05 - Math.max(0, l1) * lift, r * 0.31, r * 0.35, 0, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + r * 0.4 + l2 * stride, y + r * 1.05 - Math.max(0, l2) * lift, r * 0.31, r * 0.35, 0, 0, 7); ctx.fill();
+    // stubby arms hanging at the sides — swing opposite the legs
+    ctx.beginPath(); ctx.ellipse(cx - bw * 0.9, y + r * 0.2 + l2 * r * 0.12, r * 0.28, r * 0.46, 0.28, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + bw * 0.9, y + r * 0.2 + l1 * r * 0.12, r * 0.28, r * 0.46, -0.28, 0, 7); ctx.fill();
+    // body — one continuous bell: a rounded top blending into a wider belly
+    const g = ctx.createRadialGradient(cx - r * 0.28, y - r * 0.5, r * 0.22, cx, y + r * 0.3, r * 1.55);
     g.addColorStop(0, pal.light);
     g.addColorStop(1, pal.dark);
     ctx.fillStyle = g;
-    ctx.beginPath(); ctx.ellipse(cx, y + r * 0.32, bw, bh, 0, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(cx, y - r * 0.5, r * 0.66, r * 0.62, 0, 0, 7); ctx.fill();
-    // soft front highlight
+    ctx.beginPath(); ctx.ellipse(cx, y + r * 0.36, bw, bh, 0, 0, 7); ctx.fill();          // belly
+    ctx.beginPath(); ctx.ellipse(cx, y - r * 0.34, headR, r * 0.76, 0, 0, 7); ctx.fill(); // head (heavy overlap → bell)
+    // warm highlight down the front
     ctx.fillStyle = pal.hi;
-    ctx.beginPath(); ctx.ellipse(cx - r * 0.24, y + r * 0.12, bw * 0.44, bh * 0.5, -0.2, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx - r * 0.1, y + r * 0.12, bw * 0.4, bh * 0.62, -0.1, 0, 7); ctx.fill();
     // water sloshing in the belly
     if (water) {
       const wg = ctx.createRadialGradient(cx - bw * 0.25, y + r * 0.1, bw * 0.15, cx, y + r * 0.4, bw);
@@ -474,7 +475,7 @@ export class Renderer {
       ctx.moveTo(p.x + r * 0.35, p.y - r * 0.05); ctx.lineTo(p.x + r * 0.15, p.y + r * 0.4);
       ctx.moveTo(p.x - r * 0.45, p.y + r * 0.1); ctx.lineTo(p.x - r * 0.15, p.y + r * 0.2);
       ctx.stroke();
-      this.eyes(ctx, p.x, p.y - r * 0.5, 1, 0, true);
+      this.eyes(ctx, p.x, p.y - r * 0.82, 1, 0, true);
       if (sel) this.ring(ctx, p, t);
       return;
     }
@@ -491,8 +492,8 @@ export class Renderer {
       walk: p.walk, moving: p.moving,
     });
 
-    // eyes (busy = little side-to-side wobble)
-    this.eyes(ctx, p.x, y - r * 0.5, p.facing, p.busy ? Math.sin(t * 6) * 0.5 : 0, false);
+    // eyes perched at the top of the head (busy = little side-to-side wobble)
+    this.eyes(ctx, p.x, y - r * 0.82, p.facing, p.busy ? Math.sin(t * 6) * 0.5 : 0, false);
 
     // carrying dirt: a dark clod hugged to the chest
     if (p.carrying === 'dirt') {
@@ -532,7 +533,7 @@ export class Renderer {
   }
 
   eyes(ctx, x, y, facing, wobble, sad) {
-    const dx = 3.8, er = 3.6;
+    const dx = 3.95, er = 4.0;
     ctx.fillStyle = '#fff';
     ctx.beginPath(); ctx.arc(x - dx, y, er, 0, 7); ctx.fill();
     ctx.beginPath(); ctx.arc(x + dx, y, er, 0, 7); ctx.fill();
@@ -543,8 +544,8 @@ export class Renderer {
     const px = facing * 1.0 + wobble;
     const py = sad ? 0.8 : 0.3;
     ctx.fillStyle = '#201306';
-    ctx.beginPath(); ctx.arc(x - dx + px, y + py, 1.7, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.arc(x + dx + px, y + py, 1.7, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(x - dx + px, y + py, 2.0, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.arc(x + dx + px, y + py, 2.0, 0, 7); ctx.fill();
     ctx.fillStyle = 'rgba(255,255,255,.9)';
     ctx.beginPath(); ctx.arc(x - dx + px - 0.6, y + py - 0.7, 0.6, 0, 7); ctx.fill();
     ctx.beginPath(); ctx.arc(x + dx + px - 0.6, y + py - 0.7, 0.6, 0, 7); ctx.fill();
