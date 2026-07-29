@@ -1,5 +1,5 @@
 // Bump on every release; keep sw.js CACHE in sync so clients pick up the change.
-export const APP_VERSION = '0.4.0';
+export const APP_VERSION = '0.4.1';
 
 export const WORLD_W = 1500;
 export const WORLD_H = 1000;

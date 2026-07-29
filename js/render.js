@@ -408,16 +408,19 @@ export class Renderer {
   // ---------- mud people ----------
 
   // the shared gingerbread/golem body: rounded head over a wider belly, stubby arms & legs
-  golem(ctx, cx, y, r, pal, { swell = false, water = false } = {}) {
+  golem(ctx, cx, y, r, pal, { swell = false, water = false, walk = 0, moving = false } = {}) {
     const bw = r * 0.95 * (swell ? 1.2 : 1);
     const bh = r * 0.85 * (swell ? 1.14 : 1);
-    // legs
+    // legs — swing forward/back and lift while walking
+    const l1 = moving ? Math.sin(walk) : 0;
+    const l2 = moving ? Math.sin(walk + Math.PI) : 0;
+    const stride = r * 0.34, lift = r * 0.32;
     ctx.fillStyle = pal.dark;
-    ctx.beginPath(); ctx.ellipse(cx - r * 0.42, y + r * 1.02, r * 0.3, r * 0.34, 0, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(cx + r * 0.42, y + r * 1.02, r * 0.3, r * 0.34, 0, 0, 7); ctx.fill();
-    // arms peeking from behind the belly
-    ctx.beginPath(); ctx.ellipse(cx - bw * 0.92, y + r * 0.28, r * 0.3, r * 0.48, 0.35, 0, 7); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(cx + bw * 0.92, y + r * 0.28, r * 0.3, r * 0.48, -0.35, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx - r * 0.42 + l1 * stride, y + r * 1.02 - Math.max(0, l1) * lift, r * 0.3, r * 0.34, 0, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + r * 0.42 + l2 * stride, y + r * 1.02 - Math.max(0, l2) * lift, r * 0.3, r * 0.34, 0, 0, 7); ctx.fill();
+    // arms peeking from behind the belly — swing opposite the legs
+    ctx.beginPath(); ctx.ellipse(cx - bw * 0.92, y + r * 0.28 + l2 * r * 0.12, r * 0.3, r * 0.48, 0.35, 0, 7); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(cx + bw * 0.92, y + r * 0.28 + l1 * r * 0.12, r * 0.3, r * 0.48, -0.35, 0, 7); ctx.fill();
     // body (belly + head, same gradient so they read as one form)
     const g = ctx.createRadialGradient(cx - r * 0.3, y - r * 0.4, r * 0.25, cx, y + r * 0.2, r * 1.5);
     g.addColorStop(0, pal.light);
@@ -483,7 +486,10 @@ export class Renderer {
     ctx.beginPath(); ctx.ellipse(p.x, p.y + r * 0.95, r * 0.9, r * 0.32, 0, 0, 7); ctx.fill();
 
     const pal = { light: '#b5813f', dark: '#7a4f26', hi: 'rgba(255,226,176,.28)' };
-    this.golem(ctx, p.x, y, r, pal, { swell: p.carrying === 'water', water: p.carrying === 'water' });
+    this.golem(ctx, p.x, y, r, pal, {
+      swell: p.carrying === 'water', water: p.carrying === 'water',
+      walk: p.walk, moving: p.moving,
+    });
 
     // eyes (busy = little side-to-side wobble)
     this.eyes(ctx, p.x, y - r * 0.5, p.facing, p.busy ? Math.sin(t * 6) * 0.5 : 0, false);

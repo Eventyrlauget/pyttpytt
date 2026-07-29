@@ -16,6 +16,8 @@ export class Person {
     this.task = null;
     this.facing = 1;
     this.bob = Math.random() * Math.PI * 2;
+    this.walk = 0;              // leg-swing phase, advances while stepping
+    this.moving = false;        // stepped this frame
     this.speak = 0;             // little "!" timer
   }
 
@@ -63,6 +65,8 @@ export class Person {
     const dx = (x - this.x) / d, dy = (y - this.y) / d;
     this.x += dx * step; this.y += dy * step;
     if (Math.abs(dx) > 0.1) this.facing = Math.sign(dx);
+    this.moving = true;
+    this.walk += step * 0.14;
     return false;
   }
 
@@ -70,6 +74,7 @@ export class Person {
     if (this.speak > 0) this.speak -= dt;
     if (this.state !== 'ok' || this.inHut) return;
     this.bob += dt * (this.busy ? 9 : 3);
+    this.moving = false; // _step flips this back on if it takes a step
     const t = this.task;
     if (!t) return;
 
